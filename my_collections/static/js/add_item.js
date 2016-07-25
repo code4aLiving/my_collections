@@ -51,10 +51,11 @@ addItem.removeCustomField = function(id){
 };
 
 addItem.save = function(){
-	data = {}
-	data.name = $('#name').val();
-	data.description = $('#description').val();
-
+	var csrftoken = getCookie('csrftoken');
+	data = {    name : $('#name').val(),
+			 	description : $('#description').val()
+			};
+	
 	var customLabels = $('.custom-label');
 	var customValues = $('.custom-value');
 	var customTypes = $('.custom-type')
@@ -76,13 +77,36 @@ addItem.save = function(){
 				//Text
 				value = $(customValues[i]).val();
 				break;
-
-
 		}
 		data[$(customLabels[i]).val()] = value
 	}
+	postData = {
+		csrf_token : csrftoken,
+		id : 1,
+		data : data
+	}
+	$.post("add_item",function(postData){
+		console.log(data);
+	});
 
-	console.log(data);
+	//console.log(data);
 };
 
 addItem.init();
+
+//For getting CSRF token
+function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+               var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+             }
+          }
+      }
+ return cookieValue;
+}
