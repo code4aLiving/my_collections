@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="container">
+		{% csrf_token %}
+		<div class="row">
+			Add page content here
+		</div>
+		<div id="div1">
+			<a class="btn btn-success" href="{% url 'add_item' id=collection.id %}">New Item</a>
+		</div>
+		<a class="floating-button" title="New Item">
+			<i class="glyphicon glyphicon-arrow-up">
+			</i>
+		</a>
+	</div>
+	<script>
+		
+	</script>
+{% endblock %}
+

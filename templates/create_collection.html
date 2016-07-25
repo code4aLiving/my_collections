@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6 col-md-8 col-sm-11">
+				<form method="post" action="{% url 'create_collection' %}">
+					{% csrf_token %}                                        
+	                <div class="form-group">
+	                	<label for="name">Name</label>
+	                    <input type="text" required="true" class="form-control" id="name" name="name" placeholder="Name">
+	                </div>
+	                <div class="form-group">
+	                    <label for="description">Description</label>
+	                    <textarea class="form-control" placeholder="Description" id="description" name="description"></textarea>
+	                </div>
+	                <div class="form-group">
+		                <div class="checkbox">
+							<label>
+						      {{collectionForm.isPrivate}} Is Private
+						    </label>
+						</div>					
+					</div>
+					<input type="hidden" name="id" id="id" value=0 />
+					<button class="btn btn-success btn-sm" type="submit">Save</button>                
+	            </form>
+            </div>
+		</div>		
+	</div>
+{% endblock %}
