@@ -1,0 +1,59 @@
+
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>Collections</title>
+	    <!-- Core CSS - Include with every page -->
+	    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+	    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+	</head>
+	<body>
+		<div class="container wrapper">
+			<nav class="navbar navbar-default">
+				<div class="container-fluid">
+			    	<div class="navbar-header">
+			      		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+					        <span class="sr-only">Toggle navigation</span>
+					        <span class="icon-bar"></span>
+					        <span class="icon-bar"></span>
+					        <span class="icon-bar"></span>
+			      		</button>
+			      		<a class="navbar-brand" href="/">Collections</a>
+			    	</div>
+			    	<div class="collapse navbar-collapse" id="navbar">
+			    		{% if user.is_authenticated%}
+			    		<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+							  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.username}}<span class="caret"></span></a>
+							  <ul class="dropdown-menu">
+							  	<li><a href="#">Profile</a></li>
+							  	<li role="separator" class="divider"></li>
+							    <li><a href="{% url 'logout' %}">Logout</a></li>						    
+							  </ul>
+							</li>
+						</ul>
+						{% endif %}
+			    	</div>
+			  	</div>		  	
+			</nav>
+
+			<!-- Core Scripts - Include with every page -->
+			<script src = "{% static 'js/jquery.min.js' %}"></script>
+			<script src = "{% static 'js/bootstrap.min.js' %}"></script>
+			{% block javascript %}
+				{% if not user.is_authenticated %}
+					<script>
+		            	$("ul.nav.navbar-nav.navbar-right").css("display","none");
+		            </script>
+		        {% endif %}
+			{% endblock %}
+
+			{% block content %}
+			{% endblock %}
+	    </div>
+	</body>
+<html>
