@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from mycollections import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from forms import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -94,10 +94,11 @@ def list_collection_items(request, template_name, id):
 	return render(request, template_name,{'collection':collection})
 
 @login_required(login_url="login/")
-def add_collection_item(request, template_name, success_url, id):
+def add_collection_item(request,id, template_name='add_item.html', success_url='/'):
 	collection = Collection.objects.get(id=int(id))
 	if request.method == 'POST':
-		pass
+		responseData = request.POST.get('data')
+		return JsonResponse(responseData)
 	else:
 		return render(request, template_name, {'collection':collection})
 
