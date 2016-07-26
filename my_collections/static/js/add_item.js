@@ -5,16 +5,12 @@ addItem.customFieldSeed = 1;
 
 addItem.init = function (){
 
-	$('#save-btn').on('click',addItem.save);
-
-	$('#add-field-btn').on('click',addItem.addCustomField);
+	$('#add-field-btn').on('click', addItem.addCustomField);
 
 	$('#save-btn').on('click', addItem.save);
-}
 
-addItem.save = function(){
-	console.log("save");
-};
+	addItem.collectionId = parseInt($('#id').val());
+}
 
 addItem.addCustomField = function(){
 	var nameHtml = `<div class="col-lg-4 col-md-4 col-sm-4">
@@ -51,10 +47,8 @@ addItem.removeCustomField = function(id){
 };
 
 addItem.save = function(){
-	var csrftoken = getCookie('csrftoken');
-	data = {    name : $('#name').val(),
-			 	description : $('#description').val()
-			};
+	
+	requestData = { name : $('#name').val(), name_type: 3, description : $('#description').val(), description_type:3, id : addItem.collectionId };
 	
 	var customLabels = $('.custom-label');
 	var customValues = $('.custom-value');
@@ -78,14 +72,11 @@ addItem.save = function(){
 				value = $(customValues[i]).val();
 				break;
 		}
-		data[$(customLabels[i]).val()] = value
+		requestData[$(customLabels[i]).val().toLowerCase()] = value
+		requestData[$(customLabels[i]).val().toLowerCase() + '_type'] = type
 	}
-	postData = {
-		csrf_token : csrftoken,
-		id : 1,
-		data : data
-	}
-	$.post("add_item",function(postData){
+	
+	$.post("add_item", requestData, function(data, status){
 		console.log(data);
 	});
 
@@ -96,17 +87,24 @@ addItem.init();
 
 //For getting CSRF token
 function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-               var cookie = jQuery.trim(cookies[i]);
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) == (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-             }
-          }
-      }
- return cookieValue;
-}
+	var cookieValue = null;
+	if (document.cookie && document.cookie != '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = jQuery.trim(cookies[i]);
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) == (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+};
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+    	var csrftoken = getCookie('csrftoken');
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);        
+    }
+});

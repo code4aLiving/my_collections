@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.urlresolvers import reverse
 from models import *
+import logging
 import pdb
 
 # Create your views here.
@@ -89,6 +90,7 @@ def edit_collection(request, template_name, success_url, id):
 		#pdb.set_trace()
 		return render(request, template_name, {'collectionForm':collectionForm})
 
+@login_required(login_url="login/")
 def list_collection_items(request, template_name, id):
 	collection = Collection.objects.get(id=int(id))
 	return render(request, template_name,{'collection':collection})
@@ -97,13 +99,60 @@ def list_collection_items(request, template_name, id):
 def add_collection_item(request,id, template_name='add_item.html', success_url='/'):
 	collection = Collection.objects.get(id=int(id))
 	if request.method == 'POST':
-		responseData = request.POST.get('data')
-		return JsonResponse(responseData)
+		data = request.POST
+		#print data
+
+		customFields = {}
+		for k in data:
+			if k=="name" or k=="description" or k=="id" or k.endswith("_type"):
+				continue
+			customFields[k] = data[k + "_type"]
+	
+		add_custom_fields(customFields,collection)
+		return JsonResponse(data)
 	else:
-		return render(request, template_name, {'collection':collection})
+		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
+		return render(request, template_name, {"collection":collection, "customFields": customFields})
 
 @login_required(login_url="login/")
 def delete(request):
 	pass
-	
-	
+
+def add_custom_fields(customFields, collection):
+	collectionFields = get_collection_fields(collection)
+
+	newFields = {}
+	for k in customFields:
+		if collectionFields.has_key(k):
+			continue
+		newFields[k] = customFields[k]
+	#print newFields
+	if len(newFields) == 0:
+		return
+	arr = []
+	for k in newFields:
+		arr.append(k)
+		arr.append(newFields[k])
+
+	if len(collection.itemCustomFields) > 0:
+		collection.itemCustomFields += "," + ",".join(arr)
+	else:
+		collection.itemCustomFields += ",".join(arr)
+
+	collection.save()
+
+def get_collection_fields(collection):
+	collectionFields = {}
+	if len(collection.itemCustomFields.strip()) > 0:
+		cfArr = collection.itemCustomFields.split(',')
+ 		for i in range(0,len(cfArr),2):
+			collectionFields[cfArr[i]] = cfArr[i+1]
+	return collectionFields
+
+def field_type_value_to_field_type_name(fieldTypeValue):
+	if fieldTypeValue == 1:
+		return 'Number'
+	elif fieldTypeValue == 2:
+		return 'Date'
+	else:
+		return 'Text'
