@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.urlresolvers import reverse
 from models import *
+from common.mongodb_repository import *
 import logging
 import pdb
 
@@ -93,6 +94,13 @@ def edit_collection(request, template_name, success_url, id):
 @login_required(login_url="login/")
 def list_collection_items(request, template_name, id):
 	collection = Collection.objects.get(id=int(id))
+
+	itemsRepository = MongoDbItemsRepository()
+
+	items = itemsRepository.get_items(collection.name + str(collection.id))
+	
+	collection.items = itemsRepository.get_items(collection.name + str(collection.id))
+	print collection.items
 	return render(request, template_name,{'collection':collection})
 
 @login_required(login_url="login/")
@@ -103,12 +111,16 @@ def add_collection_item(request,id, template_name='add_item.html', success_url='
 		#print data
 
 		customFields = {}
+		d = { 'name':data['name'], 'description':data['description'], 'collectionId' : collection.id }
 		for k in data:
 			if k=="name" or k=="description" or k=="id" or k.endswith("_type"):
 				continue
+			d[k]=data[k]
 			customFields[k] = data[k + "_type"]
 	
 		add_custom_fields(customFields,collection)
+		itemsRepository = MongoDbItemsRepository()
+		itemsRepository.insert_item(collection.name + str(collection.id), d)
 		return JsonResponse(data)
 	else:
 		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
