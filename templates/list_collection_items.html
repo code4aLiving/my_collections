@@ -5,17 +5,24 @@
 		{% csrf_token %}
 		<div class="row">
 			<ul class="item-list">
-				{%for item in collection.items %}
+				{%for item in collectionItems %}
 					<li class="col-lg-4 scale-fade">
-						<div class="item-main">
+						<div class="item-main item">
 							<div>
 								<h4><a href="">{{item.name}}</a></h4>
+							</div>
+							<hr>
+							<div class="row" style="margin: 0">
+								<img class="pull-left item-thumbnail-img" src="http://www.3000toys.com/images/NORSCOT/55212.jpg"/>
+								<img class="pull-left item-thumbnail-img" src="http://www.3000toys.com/images/NORSCOT/55212.jpg"/>
+								<img class="pull-left item-thumbnail-img" src="http://www.3000toys.com/images/NORSCOT/55212.jpg"/>
+								<img class="pull-left item-thumbnail-img" src="http://www.3000toys.com/images/NORSCOT/55212.jpg"/>
 							</div>
 							<hr>
 							<div>
 								<p>{{item.description}}</p>
 							</div>
-							{% for key, value in item.items%}
+							{% for key, value in item.customFields.items%}
 							<div>
 								<p>{{key}}: {{value}}</p>
 							</div>
