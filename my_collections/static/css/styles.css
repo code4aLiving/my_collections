@@ -1,5 +1,4 @@
-.item-main { 
-	height: 260px; 
+.item-main { 	 
 	border-radius: 5px; 
 	-moz-box-shadow: 2px 2px 5px #ddd; 
 	-webkit-box-shadow: 2px 2px 5px #ddd; 
@@ -11,6 +10,14 @@
 	-webkit-transition:height 0.3s ease-in-out; 
 	-moz-transition:height 0.3s ease-in-out;
 	padding: 5px 2px 2px 10px
+}
+
+.item-collection{
+	height: 260px;
+}
+
+.item{
+	height: 400px;
 }
 
 .item-list { 
@@ -45,3 +52,5 @@
 .floating-button i { width: inherit; display: inline-block; text-align: center; color: #fff; font-size: 22px; line-height: 40px; left: -1px; top: -1px; }
 .floating-button:hover { transform: scale(1.2); -moz-transform: scale(1.2); font-size: 26px; -o-transform: scale(1.2); -webkit-transform: scale(1.2); opacity: 0.9; }
 .floating-button:before { border-radius: 0; }
+
+.item-thumbnail-img { width: 80px; height: 80px; margin-left: 2px; margin-right: 2px; !important; }

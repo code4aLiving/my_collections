@@ -10,6 +10,7 @@ class Tag(models.Model):
 
 class CollectionItem(models.Model):
 	name = models.CharField(max_length=500)
+	description = models.TextField(blank=True)
 	identifier = models.CharField(max_length=500)
 
 class Collection(models.Model):
@@ -17,6 +18,7 @@ class Collection(models.Model):
 	name = models.CharField(max_length=500)
 	description = models.TextField(blank=True)
 	isPrivate = models.BooleanField()
+	itemCustomFields = models.TextField(blank=True)
 	tags = models.ManyToManyField(Tag)
 	collectionItems = models.ManyToManyField(CollectionItem)
 

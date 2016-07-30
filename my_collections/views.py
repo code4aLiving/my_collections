@@ -8,7 +8,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.urlresolvers import reverse
 from models import *
+from common.mongodb_repository import *
+import logging
 import pdb
+import uuid
 
 # Create your views here.
 # this login required decorator is to not allow to any  
@@ -89,21 +92,94 @@ def edit_collection(request, template_name, success_url, id):
 		#pdb.set_trace()
 		return render(request, template_name, {'collectionForm':collectionForm})
 
+@login_required(login_url="login/")
 def list_collection_items(request, template_name, id):
 	collection = Collection.objects.get(id=int(id))
-	return render(request, template_name,{'collection':collection})
+	collectionItems = list(collection.collectionItems.all())
+
+	itemsRepository = MongoDbItemsRepository()
+	items = itemsRepository.get_items(collection.name + str(collection.id))
+	
+	for item in collectionItems:
+		item.customFields = {}
+		mongoitem = [x for x in items if str(x["uuid"])==item.identifier][0]
+		for k,v in mongoitem.iteritems():
+			if k == "_id" or k =="uuid" or k == "collectionId":
+				continue
+			item.customFields[k]=v
+	
+	return render(request, template_name,{'collection':collection, "collectionItems":collectionItems})
 
 @login_required(login_url="login/")
 def add_collection_item(request,id, template_name='add_item.html', success_url='/'):
 	collection = Collection.objects.get(id=int(id))
 	if request.method == 'POST':
-		responseData = request.POST.get('data')
-		return JsonResponse(responseData)
+		data = request.POST
+		
+		#Insert in sql name and description
+		collectionItem = CollectionItem.objects.create(name=data["name"],description=data["description"],identifier=uuid.uuid4())
+		collectionItem.save()
+		collection.collectionItems.add(collectionItem)
+		collection.save()
+
+		#insert custom fields in mongodb and update the list of custom fields on the collection
+		customFields = {}
+		d = { 'uuid':collectionItem.identifier, 'collectionId' : collection.id }
+		for k in data:
+			if k=="name" or k=="description" or k=="id" or k.endswith("_type"):
+				continue
+			d[k]=data[k]
+			customFields[k] = data[k + "_type"]
+
+		add_custom_fields(customFields, collection)
+
+		itemsRepository = MongoDbItemsRepository()
+		itemsRepository.insert_item(collection.name + str(collection.id), d)
+		
+		return JsonResponse(data)
 	else:
-		return render(request, template_name, {'collection':collection})
+		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
+		return render(request, template_name, {"collection":collection, "customFields": customFields})
 
 @login_required(login_url="login/")
 def delete(request):
 	pass
-	
-	
+
+def add_custom_fields(customFields, collection):
+	collectionFields = get_collection_fields(collection)
+
+	newFields = {}
+	for k in customFields:
+		if collectionFields.has_key(k):
+			continue
+		newFields[k] = customFields[k]
+	#print newFields
+	if len(newFields) == 0:
+		return
+	arr = []
+	for k in newFields:
+		arr.append(k)
+		arr.append(newFields[k])
+
+	if len(collection.itemCustomFields) > 0:
+		collection.itemCustomFields += "," + ",".join(arr)
+	else:
+		collection.itemCustomFields += ",".join(arr)
+
+	collection.save()
+
+def get_collection_fields(collection):
+	collectionFields = {}
+	if len(collection.itemCustomFields.strip()) > 0:
+		cfArr = collection.itemCustomFields.split(',')
+ 		for i in range(0,len(cfArr),2):
+			collectionFields[cfArr[i]] = cfArr[i+1]
+	return collectionFields
+
+def field_type_value_to_field_type_name(fieldTypeValue):
+	if fieldTypeValue == 1:
+		return 'Number'
+	elif fieldTypeValue == 2:
+		return 'Date'
+	else:
+		return 'Text'
