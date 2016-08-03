@@ -28,7 +28,7 @@
 							</div>
 							{% endfor %}
 							<div class="footer">
-								<a class="btn btn-sm btn-default" href="{% url 'edit_collection' id=collection.id %}">Edit</a>
+								<a class="btn btn-sm btn-default" href="{% url 'edit_item' collectionId=collection.id itemId=item.id %}">Edit</a>
 							</div>
 						</div>
 					</li>

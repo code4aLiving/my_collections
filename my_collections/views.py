@@ -141,6 +141,14 @@ def add_collection_item(request,id, template_name='add_item.html', success_url='
 		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
 		return render(request, template_name, {"collection":collection, "customFields": customFields})
 
+def edit_item(request,collectionId,itemId,template_name='add_item.html',success_url='/'):
+	collection = Collection.objects.get(id=int(collectionId))
+	customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
+	collectionItem = CollectionItem.objects.get(id=int(itemId))
+	itemForm = ItemForm(instance=collectionItem)
+	print itemForm
+	return render(request, template_name,{"collection":collection, "customFields": customFields, "itemForm": itemForm})
+
 @login_required(login_url="login/")
 def delete(request):
 	pass

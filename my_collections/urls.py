@@ -13,4 +13,6 @@ urlpatterns = [
     	'success_url':'/'}, name='add_item'),
     url(r'collections/(?P<id>[0-9]+)$', views.list_collection_items, {'template_name':'list_collection_items.html'},
     	name='list_collection_items'),
+    url(r'^collections/(?P<collectionId>[0-9]+)/edit_item/(?P<itemId>[0-9]+)$', views.edit_item, 
+    	{'template_name':'add_item.html', 'success_url':'/'},name='edit_item')
 ]

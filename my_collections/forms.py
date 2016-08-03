@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django import forms
 from django.forms import ModelForm, TextInput
-from models import Collection
+from models import Collection, CollectionItem
 
 class LoginForm(AuthenticationForm):
   username = forms.CharField(label="Username", max_length=30, required=True,
@@ -34,3 +34,11 @@ class CollectionForm(ModelForm):
       'name' : TextInput(attrs={"class":"form-control"}),
     }
   id = forms.IntegerField()
+
+class ItemForm(ModelForm):
+  class Meta:
+    model = CollectionItem
+    fields = ['id','name','description']
+    widget = {
+      'name' : TextInput(attrs={"class":"form-control"})
+    }
