@@ -1,5 +1,13 @@
-.container{
+.container.main-container{
 	padding-bottom: 10px;
+	margin-left: 0;
+	margin-right: 0;
+	width:100%;
+}
+.container.wrapper{
+	margin-right: 5%;
+	margin-left: 5%;
+	width:90%;
 }
 .item-main { 	 
 	border-radius: 5px; 
