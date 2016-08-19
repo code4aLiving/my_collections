@@ -4,8 +4,8 @@ import json
 
 
 class MongoDbItemsRepository():
-	
-	def __init__(self, connectionString='mongodb://admin:admin@ds036709.mlab.com:36709/'):
+	#mongodb://admin:admin@ds036709.mlab.com:36709/
+	def __init__(self, connectionString='mongodb://localhost:27017/'):
 		self.connectionString = connectionString
 		self.dbName = 'collections'
 		self._connect()

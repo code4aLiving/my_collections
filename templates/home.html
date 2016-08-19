@@ -8,14 +8,14 @@
 				{%for collection in collections %}
 					<li class="col-lg-4 scale-fade">
 						<div class="item-main item-collection">
-							<div>
+							<div class="item-collection-name">
 								<h4><a href="{% url 'list_collection_items' id=collection.id %}">{{collection.name}}</a></h4>
 							</div>
 							<hr>
-							<div>
+							<div class="item-collection-body">
 								<p>{{collection.description}}
 							</div>
-							<div class="footer">
+							<div class="footer item-collection-footer">
 								<a class="btn btn-sm btn-default" href="{% url 'edit_collection' id=collection.id %}">Edit</a>
 							</div>											
 						</div>

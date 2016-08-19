@@ -1,3 +1,6 @@
+.container{
+	padding-bottom: 10px;
+}
 .item-main { 	 
 	border-radius: 5px; 
 	-moz-box-shadow: 2px 2px 5px #ddd; 
@@ -15,7 +18,13 @@
 .item-collection{
 	height: 260px;
 }
-
+.item-collection hr{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.item-collection-body{
+	height: 60%;
+}
 .item{
 	height: 400px;
 }
