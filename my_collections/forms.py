@@ -40,5 +40,9 @@ class ItemForm(ModelForm):
     model = CollectionItem
     fields = ['id','name','description']
     widget = {
-      'name' : TextInput(attrs={"class":"form-control"})
+      'name' : forms.TextInput(attrs={"class":"form-control"})
     }
+  name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'name':'name', 'id':'name', 'required':'true',
+    "class":"form-control", "placeholder":"Name"}))
+  description = forms.CharField(label="Description", widget=forms.Textarea(attrs={'class':"form-control",
+    'placeholder':"Description", 'id':"description", 'name':"description"}))

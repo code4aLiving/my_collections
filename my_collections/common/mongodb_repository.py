@@ -5,7 +5,7 @@ import json
 
 class MongoDbItemsRepository():
 	#mongodb://admin:admin@ds036709.mlab.com:36709/
-	def __init__(self, connectionString='mongodb://localhost:27017/'):
+	def __init__(self, connectionString='mongodb://admin:admin@ds036709.mlab.com:36709/'):
 		self.connectionString = connectionString
 		self.dbName = 'collections'
 		self._connect()
@@ -33,5 +33,7 @@ class MongoDbItemsRepository():
 				break
 		return res
 
-	def get_item_by_id(self, collectionName, itemId):
-		pass
+	def get_item_by_id(self, collectionName, itemUUID):
+		collection = self.db[str(collectionName)]
+		for x in collection.find({"uuid":itemUUID}):
+			return x

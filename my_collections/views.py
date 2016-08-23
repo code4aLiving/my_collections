@@ -117,7 +117,7 @@ def add_collection_item(request,id, template_name='add_item.html', success_url='
 		data = request.POST
 		
 		#Insert in sql name and description
-		collectionItem = CollectionItem.objects.create(name=data["name"],description=data["description"],identifier=uuid.uuid4())
+		collectionItem = CollectionItem.objects.create(name=data["name"],description=data["description"],identifier=uuid.uuid1())
 		collectionItem.save()
 		collection.collectionItems.add(collectionItem)
 		collection.save()
@@ -135,11 +135,11 @@ def add_collection_item(request,id, template_name='add_item.html', success_url='
 
 		itemsRepository = MongoDbItemsRepository()
 		itemsRepository.insert_item(collection.name + str(collection.id), d)
-		
+		print d['uuid']
 		return JsonResponse(data)
 	else:
 		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
-		return render(request, template_name, {"collection":collection, "customFields": customFields})
+		return render(request, template_name, {"collection":collection, "customFields": customFields, "itemForm":ItemForm()})
 
 @login_required(login_url="login/")
 def edit_item(request,collectionId,itemId,template_name='add_item.html',success_url='/'):
@@ -147,8 +147,18 @@ def edit_item(request,collectionId,itemId,template_name='add_item.html',success_
 	customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
 	collectionItem = CollectionItem.objects.get(id=int(itemId))
 	itemForm = ItemForm(instance=collectionItem)
-	print itemForm
-	return render(request, template_name,{"collection":collection, "customFields": customFields, "itemForm": itemForm})
+	itemsRepository = MongoDbItemsRepository()
+	collectionItem.customFields = {}
+	mongoitem = itemsRepository.get_item_by_id(collection.name+str(collection.id),collectionItem.identifier)
+	print collection.name+str(collection.id),collectionItem.identifier, mongoitem
+	for k,v in mongoitem.iteritems():
+		if k == "_id" or k =="uuid" or k == "collectionId":
+			continue
+		collectionItem.customFields[k]=v
+
+	#print itemForm
+	return render(request, template_name,{"collection":collection, "customFields": customFields, "itemForm": itemForm,
+		"collectionItem":collectionItem})
 
 @login_required(login_url="login/")
 def delete(request):
