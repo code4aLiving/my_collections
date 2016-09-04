@@ -1,53 +1,19 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 
-
 {% block content %}
 	<div class="container main-container">
+		{{collection.name}}
+		{{collection.id}}
 		<div class="row">
 			<div class="col-lg-12 col-md-12 col-sm-12">
-				<form id="item-form">
+				<form id="item-form" method="post" action="{% url 'add_item' collection.id %}">
 					{% csrf_token %}
-	                <div class="form-group">
-	                	<label for="name">Name</label>
-	                    {{itemForm.name}}
-	                </div>
-	                <div class="form-group">
-	                    <label for="description">Description</label>
-	                    {{itemForm.description}}
-	                    <textarea class="form-control" placeholder="Description" id="description" name="description"
-	                    value={{itemForm.description.value}}>{{itemForm.description.value}}</textarea>
-	                </div>
-	                {{customFields}}
-	                {{collectionItem.customFields}}
-	                {%for k,v,vn in customFields %}
-
-	                <div class="form-group row">
-	                	<div class="col-lg-4 col-md-4 col-sm-4">
-							<input type="text" required="true" readonly="" class="form-control custom-label" id="label" name="label" value="{{k}}" placeholder="Field name">
-						</div>
-	                	<div class="col-lg-4 col-md-4 col-sm-4">
-	                    	<input type="text" required="true" class="form-control custom-value" id="{{k}}" name="{{k}}" placeholder="{{k}}" value="{{v}}">
-	                    </div>
-	                    <div class="col-lg-2 col-md-3 col-sm-3">
-							<select disabled="true" class="form-control custom-type">
-								<option selected value="{{v}}">{{vn}}</option>
-		                	</select>
-		                </div>
-	                </div>
-
-	                {% endfor %}
-
-	                <div id="custom-fields-div">
-	                	
-	                </div>
-	                
+	                {{collectionItemForm}}	                
 	                <input type="hidden" name="id" id="id" value="{{collection.id}}" />
-	                <button class="btn btn-default btn-sm" id="add-field-btn">Add field</button>
-					<button class="btn btn-success btn-sm" id="save-btn">Save</button>                
+	                <button class="btn btn-success btn-sm" id="save-btn">Save</button>                
 	            </form>
             </div>
 		</div>		
 	</div>
-	<script src = "{% static 'js/add_item.js' %}"></script>
 {% endblock %}

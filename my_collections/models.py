@@ -11,6 +11,7 @@ class Tag(models.Model):
 class CollectionItem(models.Model):
 	name = models.CharField(max_length=500)
 	description = models.TextField(blank=True)
+	price = models.FloatField(default=0)
 	identifier = models.CharField(max_length=500)
 
 class Collection(models.Model):

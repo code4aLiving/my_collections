@@ -66,7 +66,7 @@ def create_collection(request, template_name, success_url):
 			#collection.save()
 			return HttpResponseRedirect(success_url)
 		else:
-			pdb.set_trace()
+			#pdb.set_trace()
 			return render(request,template_name,{'collectionForm':collectionForm})
 	else:
 		collectionForm = CollectionForm()
@@ -96,50 +96,28 @@ def edit_collection(request, template_name, success_url, id):
 def list_collection_items(request, template_name, id):
 	collection = Collection.objects.get(id=int(id))
 	collectionItems = list(collection.collectionItems.all())
-
-	itemsRepository = MongoDbItemsRepository()
-	items = itemsRepository.get_items(collection.name + str(collection.id))
-	
-	for item in collectionItems:
-		item.customFields = {}
-		mongoitem = [x for x in items if str(x["uuid"])==item.identifier][0]
-		for k,v in mongoitem.iteritems():
-			if k == "_id" or k =="uuid" or k == "collectionId":
-				continue
-			item.customFields[k]=v
-	
 	return render(request, template_name,{'collection':collection, "collectionItems":collectionItems})
 
 @login_required(login_url="login/")
-def add_collection_item(request,id, template_name='add_item.html', success_url='/'):
+def add_collection_item(request, id, template_name='add_item.html', success_url='/'):
+	success_url = '/collections/' + str(id)
 	collection = Collection.objects.get(id=int(id))
 	if request.method == 'POST':
-		data = request.POST
-		
-		#Insert in sql name and description
-		collectionItem = CollectionItem.objects.create(name=data["name"],description=data["description"],identifier=uuid.uuid1())
-		collectionItem.save()
-		collection.collectionItems.add(collectionItem)
-		collection.save()
-
-		#insert custom fields in mongodb and update the list of custom fields on the collection
-		customFields = {}
-		d = { 'uuid':collectionItem.identifier, 'collectionId' : collection.id }
-		for k in data:
-			if k=="name" or k=="description" or k=="id" or k.endswith("_type"):
-				continue
-			d[k]=data[k]
-			customFields[k] = data[k + "_type"]
-
-		add_custom_fields(customFields, collection)
-
-		itemsRepository = MongoDbItemsRepository()
-		itemsRepository.insert_item(collection.name + str(collection.id), d)
-		print d['uuid']
-		return JsonResponse(data)
+		collectionItemForm = ItemForm(request.POST)
+		if collectionItemForm.is_valid():
+			collectionItem = CollectionItem.objects.create(name = collectionItemForm.cleaned_data['name'],
+				description = collectionItemForm.cleaned_data['description'],
+				price = collectionItemForm.cleaned_data['price'])
+			collectionItem.save()
+			collection.collectionItems.add(collectionItem)
+			collection.save()
+			return HttpResponseRedirect(success_url)
+		else:
+			#pdb.set_trace()
+			return render(request,template_name,{'collection':collection,'collectionItemForm':collectionItemForm})
 	else:
-		customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
-		return render(request, template_name, {"collection":collection, "customFields": customFields, "itemForm":ItemForm()})
+		collectionItemForm = ItemForm()
+		return render(request, template_name, {'collectionItemForm':collectionItemForm, 'collection':collection})
 
 @login_required(login_url="login/")
 def edit_item(request,collectionId,itemId,template_name='add_item.html',success_url='/'):

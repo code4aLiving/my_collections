@@ -38,11 +38,14 @@ class CollectionForm(ModelForm):
 class ItemForm(ModelForm):
   class Meta:
     model = CollectionItem
-    fields = ['id','name','description']
+    fields = ['id','name','price','description']
     widget = {
       'name' : forms.TextInput(attrs={"class":"form-control"})
     }
+  #id = forms.IntegerField()
   name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'name':'name', 'id':'name', 'required':'true',
     "class":"form-control", "placeholder":"Name"}))
   description = forms.CharField(label="Description", widget=forms.Textarea(attrs={'class':"form-control",
     'placeholder':"Description", 'id':"description", 'name':"description"}))
+  price = forms.FloatField(label="Price", widget=forms.TextInput(attrs={'name':'price', 'id':'price', 'required':'false',
+    "class":"form-control", "placeholder":"Price"}))
