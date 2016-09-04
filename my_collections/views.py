@@ -122,21 +122,22 @@ def add_collection_item(request, id, template_name='add_item.html', success_url=
 @login_required(login_url="login/")
 def edit_item(request,collectionId,itemId,template_name='add_item.html',success_url='/'):
 	collection = Collection.objects.get(id=int(collectionId))
-	customFields = [(k,v,field_type_value_to_field_type_name(int(v))) for k,v in get_collection_fields(collection).iteritems()]
 	collectionItem = CollectionItem.objects.get(id=int(itemId))
-	itemForm = ItemForm(instance=collectionItem)
-	itemsRepository = MongoDbItemsRepository()
-	collectionItem.customFields = {}
-	mongoitem = itemsRepository.get_item_by_id(collection.name+str(collection.id),collectionItem.identifier)
-	print collection.name+str(collection.id),collectionItem.identifier, mongoitem
-	for k,v in mongoitem.iteritems():
-		if k == "_id" or k =="uuid" or k == "collectionId":
-			continue
-		collectionItem.customFields[k]=v
-
-	#print itemForm
-	return render(request, template_name,{"collection":collection, "customFields": customFields, "itemForm": itemForm,
-		"collectionItem":collectionItem})
+	create = False
+	success_url = '/collections/' + str(collectionId)
+	if request.method == 'POST':
+		collectionItemForm = ItemForm(request.POST)
+		if collectionItemForm.is_valid():
+			collectionItemForm = ItemForm(request.POST, instance = collectionItem)
+			collectionItemForm.save()
+			return HttpResponseRedirect(success_url)
+		else:
+			return redirect(edit_item,collectionId,itemId)
+	else:
+		collectionItemForm = ItemForm(instance=collectionItem)
+		print collectionItem
+		return render(request, template_name, {'collection':collection, 'collectionItemForm':collectionItemForm, 
+			'collectionItem':collectionItem,'itemId':itemId})
 
 @login_required(login_url="login/")
 def delete(request):

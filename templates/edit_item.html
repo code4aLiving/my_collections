@@ -3,13 +3,11 @@
 
 {% block content %}
 	<div class="container main-container">
-		{{collection.name}}
-		{{collection.id}}
 		<div class="row">
 			<div class="col-lg-12 col-md-12 col-sm-12">
-				<form id="item-form" method="post" action="{% url 'add_item' collection.id %}">
+				<form id="item-form" method="post" action="{% url 'edit_item' collection.id itemId %}">
 					{% csrf_token %}
-	                {{collectionItemForm}}	                
+	                {{collectionItemForm}}
 	                <input type="hidden" name="id" id="id" value="{{collection.id}}" />
 	                <div>
 					{% if collectionItemForm.errors %}
@@ -18,9 +16,9 @@
 						{%endfor%}
 	                {% endif %}
 	                </div>
-	                <button class="btn btn-success btn-sm" id="save-btn">Save</button>                
+	                <button class="btn btn-success btn-sm" id="save-btn">Save</button>
 	            </form>
             </div>
-		</div>		
+		</div>
 	</div>
 {% endblock %}
