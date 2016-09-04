@@ -21,16 +21,8 @@
 					</div>					
 				</div>
 				<input type="hidden" name="id" id="id" value={{collectionForm.id.value}} />
-				<div>
-				{% if collectionForm.errors %}
-					{% for e in collectionForm.errors%}
-                    <p>errors</p>
-					{%endfor%}
-                {% endif %}
-                </div>
-                <button class="btn btn-success btn-sm" type="submit">Save</button>                
+				<button class="btn btn-success btn-sm" type="submit">Save</button>                
             </form>
-
 		</div>		
 	</div>
 {% endblock %}

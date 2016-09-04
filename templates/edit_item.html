@@ -9,13 +9,6 @@
 					{% csrf_token %}
 	                {{collectionItemForm}}
 	                <input type="hidden" name="id" id="id" value="{{collection.id}}" />
-	                <div>
-					{% if collectionItemForm.errors %}
-						{% for e in collectionItemForm.errors%}
-	                    <p>{{e}}</p>
-						{%endfor%}
-	                {% endif %}
-	                </div>
 	                <button class="btn btn-success btn-sm" id="save-btn">Save</button>
 	            </form>
             </div>
