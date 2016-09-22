@@ -1,10 +1,13 @@
 from django.conf.urls import url
 from . import views
+from class_views.CollectionList import *
 
 # We are adding a URL called /home
 urlpatterns = [
-    url(r'^$', views.get_collections, name='home'),
-    url(r'^collections$', views.get_collections, name='collections'),
+    #url(r'^$', views.get_collections, name='home'),
+    url(r'^collections$', CollectionList.as_view(), name='collections'),
+    url(r'^$', CollectionList.as_view(), name='home'),
+    #url(r'^collections$', views.get_collections, name='collections'),
     url(r'^collections/create$', views.create_collection, {'template_name':'create_collection.html', 
     	'success_url':'/'}, name='create_collection'),
     url(r'^collections/edit/(?P<id>[0-9]+)$', views.edit_collection, {'template_name':'edit_collection.html', 

@@ -5,7 +5,7 @@
 		{% csrf_token %}
 		<div class="row">
 			<ul class="item-list">
-				{%for item in collectionItems %}
+				{%for item in object_list %}
 					<li class="col-lg-4 scale-fade">
 						<div class="item-main item">
 							<div>
@@ -28,7 +28,7 @@
 							</div>
 							{% endfor %}
 							<div class="footer">
-								<a class="btn btn-sm btn-default" href="{% url 'edit_item' collectionId=collection.id itemId=item.id %}">Edit</a>
+								<a class="btn btn-sm btn-default" href="{% url 'edit_item' collectionId=item.id itemId=item.id %}">Edit</a>
 							</div>
 						</div>
 					</li>
@@ -36,7 +36,7 @@
 			</ul>
 		</div>
 		<div id="div1">
-			<a class="btn btn-success" href="{% url 'add_item' id=collection.id %}">New Item</a>
+			<a class="btn btn-success" href="">New Item</a>
 		</div>
 		<a class="floating-button" title="New Item">
 			<i class="glyphicon glyphicon-arrow-up">

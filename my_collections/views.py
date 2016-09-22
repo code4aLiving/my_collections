@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.urlresolvers import reverse
 from models import *
-from common.mongodb_repository import *
 import logging
 import pdb
 import uuid
