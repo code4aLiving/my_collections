@@ -10,17 +10,18 @@ from class_views.CollectionItemEdit import *
 # We are adding a URL called /home
 urlpatterns = [
     
-    url(r'^collections$', CollectionList.as_view(), name='collections'),
+    url(r'^collections$', login_required(CollectionList.as_view()), name='collections'),
     
-    url(r'^$', CollectionList.as_view(), name='home'),
+    url(r'^$', login_required(CollectionList.as_view()), name='home'),
     
-    url(r'^collections/create$', CollectionCreate.as_view(), name='create_collection'),
+    url(r'^collections/create$', login_required(CollectionCreate.as_view()), name='create_collection'),
     
-    url(r'^collections/edit/(?P<id>[0-9]+)$', CollectionEdit.as_view(), name='edit_collection'),
+    url(r'^collections/edit/(?P<id>[0-9]+)$', login_required(CollectionEdit.as_view()), name='edit_collection'),
 
-    url(r'^collections/(?P<collectionId>[0-9]+)/create_item$', CollectionItemCreate.as_view(), name='create_item'),
+    url(r'^collections/(?P<collectionId>[0-9]+)/create_item$', login_required(CollectionItemCreate.as_view()), name='create_item'),
     
-    url(r'^collections/(?P<id>[0-9]+)$', CollectionItemList.as_view(), name='list_collection_items'),
+    url(r'^collections/(?P<id>[0-9]+)$', login_required(CollectionItemList.as_view()), name='list_collection_items'),
     
-    url(r'^collections/(?P<collectionId>[0-9]+)/edit_item/(?P<itemId>[0-9]+)$', CollectionItemEdit.as_view(), name='edit_item'),
+    url(r'^collections/(?P<collectionId>[0-9]+)/edit_item/(?P<itemId>[0-9]+)$', login_required(CollectionItemEdit.as_view()),
+     name='edit_item'),
 ]

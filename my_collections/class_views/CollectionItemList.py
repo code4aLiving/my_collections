@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect
 from mycollections import settings
 
+@method_decorator(login_required,name='get')
 class CollectionItemList(ListView):
 	model = CollectionItem
 	template_name = 'list_collection_items.html'
