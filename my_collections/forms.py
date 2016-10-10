@@ -34,6 +34,10 @@ class CollectionForm(ModelForm):
       'name' : TextInput(attrs={"class":"form-control"}),
     }
   id = forms.IntegerField()
+  name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'name':'name', 'id':'name', 'required':'true',
+    "class":"form-control", "placeholder":"Name"}))
+  description = forms.CharField(label="Description", widget=forms.Textarea(attrs={'class':"form-control",
+    'placeholder':"Description", 'id':"description", 'name':"description"}))
 
 class ItemForm(ModelForm):
   class Meta:

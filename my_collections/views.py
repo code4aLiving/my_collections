@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.urlresolvers import reverse
 from models import *
-from common.mongodb_repository import *
 import logging
 import pdb
 import uuid
@@ -48,100 +47,6 @@ def customLogin(request, template_name, authentication_form):
 			return render(request,template_name,{'authentication_form':authentication_form})
 	else:
 		return login(request)
-
-@login_required(login_url="login/")
-def get_collections(request):
-	collections = list(Collection.objects.filter(user_id=request.user.id))
-	return render(request, 'home.html', {'collections': collections})
-
-@login_required(login_url="login/")
-def create_collection(request, template_name, success_url):
-	create = True
-	if request.method == 'POST':
-		collectionForm = CollectionForm(request.POST)
-		if collectionForm.is_valid():
-			collection = Collection.objects.create(user = request.user, name = collectionForm.cleaned_data['name'],
-				description = collectionForm.cleaned_data['description'],
-				isPrivate = collectionForm.cleaned_data['isPrivate'])
-			#collection.save()
-			return HttpResponseRedirect(success_url)
-		else:
-			#pdb.set_trace()
-			return render(request,template_name,{'collectionForm':collectionForm})
-	else:
-		collectionForm = CollectionForm()
-		return render(request,template_name,{'collectionForm':collectionForm})
-
-@login_required(login_url="login/")
-def edit_collection(request, template_name, success_url, id):
-	collection = Collection.objects.get(id=int(id))
-	create = False
-	if request.method == 'POST':
-		collectionForm = CollectionForm(request.POST)
-		#pdb.set_trace()
-		if collectionForm.is_valid():
-			collectionForm = CollectionForm(request.POST, instance = collection)
-			collectionForm.save()
-			#pdb.set_trace()
-			return HttpResponseRedirect(success_url)
-		else:
-			#pdb.set_trace()
-			return redirect(edit_collection,id)
-	else:
-		collectionForm = CollectionForm(instance=collection)
-		#pdb.set_trace()
-		return render(request, template_name, {'collectionForm':collectionForm})
-
-@login_required(login_url="login/")
-def list_collection_items(request, template_name, id):
-	collection = Collection.objects.get(id=int(id))
-	collectionItems = list(collection.collectionItems.all())
-	return render(request, template_name,{'collection':collection, "collectionItems":collectionItems})
-
-@login_required(login_url="login/")
-def add_collection_item(request, id, template_name='add_item.html', success_url='/'):
-	success_url = '/collections/' + str(id)
-	collection = Collection.objects.get(id=int(id))
-	if request.method == 'POST':
-		collectionItemForm = ItemForm(request.POST)
-		if collectionItemForm.is_valid():
-			collectionItem = CollectionItem.objects.create(name = collectionItemForm.cleaned_data['name'],
-				description = collectionItemForm.cleaned_data['description'],
-				price = collectionItemForm.cleaned_data['price'])
-			collectionItem.save()
-			collection.collectionItems.add(collectionItem)
-			collection.save()
-			return HttpResponseRedirect(success_url)
-		else:
-			#pdb.set_trace()
-			return render(request,template_name,{'collection':collection,'collectionItemForm':collectionItemForm})
-	else:
-		collectionItemForm = ItemForm()
-		return render(request, template_name, {'collectionItemForm':collectionItemForm, 'collection':collection})
-
-@login_required(login_url="login/")
-def edit_item(request,collectionId,itemId,template_name='add_item.html',success_url='/'):
-	collection = Collection.objects.get(id=int(collectionId))
-	collectionItem = CollectionItem.objects.get(id=int(itemId))
-	create = False
-	success_url = '/collections/' + str(collectionId)
-	if request.method == 'POST':
-		collectionItemForm = ItemForm(request.POST)
-		if collectionItemForm.is_valid():
-			collectionItemForm = ItemForm(request.POST, instance = collectionItem)
-			collectionItemForm.save()
-			return HttpResponseRedirect(success_url)
-		else:
-			return redirect(edit_item,collectionId,itemId)
-	else:
-		collectionItemForm = ItemForm(instance=collectionItem)
-		print collectionItem
-		return render(request, template_name, {'collection':collection, 'collectionItemForm':collectionItemForm, 
-			'collectionItem':collectionItem,'itemId':itemId})
-
-@login_required(login_url="login/")
-def delete(request):
-	pass
 
 def add_custom_fields(customFields, collection):
 	collectionFields = get_collection_fields(collection)

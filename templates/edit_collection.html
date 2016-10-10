@@ -4,14 +4,14 @@
 	<div class="container main-container">
 		<div class="row">
 			<form method="post" action="{% url 'edit_collection' collectionForm.id.value %}">
-			    {% csrf_token %}                                        
-                <div class="form-group">
+			    {% csrf_token %}
+			    <div class="form-group">
                 	<label for="name">Name</label>
-                    <input type="text" required="true" class="form-control" id="name" name="name" placeholder="Name" value={{collectionForm.name.value}}>
+                	{{collectionForm.name}}                    
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea class="form-control" placeholder="Description" id="description" name="description">{{collectionForm.description.value}}</textarea> 
+                    {{collectionForm.description}}
                 </div>
                 <div class="form-group">
 	                <div class="checkbox">
